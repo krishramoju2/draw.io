@@ -16,19 +16,15 @@ const bgStyleEl = document.getElementById('bg-style');
 brushSizeEl.addEventListener('change', () => {
   brushSize = parseInt(brushSizeEl.value);
 });
-
 brushColorEl.addEventListener('input', () => {
   brushColor = brushColorEl.value;
 });
-
 brushStyleEl.addEventListener('change', () => {
   brushStyle = brushStyleEl.value;
 });
-
 brushTypeEl.addEventListener('change', () => {
   brushType = brushTypeEl.value;
 });
-
 bgStyleEl.addEventListener('change', () => {
   applyBackground(bgStyleEl.value);
 });
@@ -49,18 +45,17 @@ document.getElementById('clear').addEventListener('click', () => {
 
 document.getElementById('help').addEventListener('click', () => {
   alert(`🧠 Sample Questions I understand:\n
-  - “How do I become a frontend/backend/fullstack developer?”
-  - “Best sites to learn AI/DSA/Git/cloud/etc.”
-  - “Top languages, tools, frameworks in 2025”
-  - “Internship, career advice, cracking interviews”
-  - “Portfolio/project hosting, open source, design tools”
-  - “Switching careers, staying motivated, time management”
-  - and more!`);
+- “How do I become a frontend/backend/fullstack developer?”
+- “Best sites to learn AI/DSA/Git/cloud/etc.”
+- “Top languages, tools, frameworks in 2025”
+- “Internship, career advice, cracking interviews”
+- “Portfolio/project hosting, open source, design tools”
+- “Switching careers, staying motivated, time management”`);
 });
 
+// ✨ Drawing function
 function draw(e) {
   if (!painting) return;
-
   ctx.lineWidth = brushSize;
   ctx.strokeStyle = brushColor;
   ctx.lineCap = brushStyle;
@@ -87,7 +82,7 @@ function draw(e) {
   }
 }
 
-// Background options
+// 🌈 Background style selector
 function applyBackground(type) {
   const bg = canvas;
   switch (type) {
@@ -114,88 +109,82 @@ function applyBackground(type) {
   }
 }
 
-// 🔍 Vast prompt support
+// 🕰️ Time Machine - Store Prompt History
+const promptHistory = [];
+
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleString();
+}
+
+// 🧠 Prompt recognizer with expanded responses
 function recognizeSketch() {
-  const sketchText = generateRandomSketchKeyword(); // replace with OCR if real
-  const responses = [
-    { keywords: ["frontend", "web dev"], msg: "Learn HTML, CSS, JavaScript, and React or Vue." },
-    { keywords: ["backend", "server"], msg: "Node.js, Express, Django or FastAPI are solid choices." },
-    { keywords: ["fullstack"], msg: "Combine frontend + backend, often with MERN or Django stack." },
-    { keywords: ["ai", "machine", "ml"], msg: "Start with Python, learn sklearn, TensorFlow, NLP, and DL." },
-    { keywords: ["data science", "ds"], msg: "Python, pandas, matplotlib, and real-world datasets." },
-    { keywords: ["internship", "job", "resume"], msg: "Build projects, use LinkedIn, and tailor your resume." },
-    { keywords: ["cloud", "aws", "azure", "gcp"], msg: "Start with free tiers, then dive into certifications." },
-    { keywords: ["git", "github", "version"], msg: "Learn basic Git commands and collaborate on GitHub." },
-    { keywords: ["design", "figma", "ui"], msg: "Figma and Canva are great for wireframes and UI mocks." },
-    { keywords: ["youtube", "channels"], msg: "Check out Fireship, CodeWithHarry, Amigoscode, Dev Ed." },
-    { keywords: ["opensource"], msg: "Start with beginner-friendly repos tagged 'good first issue'." },
-    { keywords: ["portfolio", "host"], msg: "Use GitHub Pages, Netlify, or Vercel to deploy sites." },
-    { keywords: ["roadmap"], msg: "Explore roadmap.sh for structured dev learning paths." },
-    { keywords: ["motivation", "focus"], msg: "Break tasks down, join dev communities, celebrate progress." },
-    { keywords: ["tools", "editors"], msg: "VS Code, Git, Chrome DevTools, and Postman are essential." },
-    { keywords: ["crack", "interview"], msg: "Practice LeetCode, mock interviews, and behavioral Qs." },
-    { keywords: ["freelance"], msg: "Use platforms like Upwork, Fiverr, and Toptal. Build a portfolio." },
-    { keywords: ["time", "manage"], msg: "Try Pomodoro, Notion for planning, and daily 3-goal rule." },
-    { keywords: ["career", "switch"], msg: "Start with Python, build small apps, get certs, show work." },
-    { keywords: ["learning", "start"], msg: "Start small, stay consistent, build one project per topic." },
-  ];
+  const sketchPrompt = generateRandomSketchKeyword();
+  const promptMap = {
+    "frontend": "Learn HTML, CSS, JS & React for frontend dev.",
+    "backend": "Explore Node.js, Express or Django for backend.",
+    "fullstack": "Master both frontend and backend. MERN is great.",
+    "ai": "Get started with Python, scikit-learn, and real datasets.",
+    "cloud": "Learn AWS/GCP, deploy projects, try certifications.",
+    "git": "Use GitHub, master commits, branches and pull requests.",
+    "resume": "Tailor it to job roles. Use Teal, Zety, or Rezi.",
+    "interview": "Practice on LeetCode, InterviewBit, Pramp.",
+    "opensource": "Contribute to GitHub projects with 'good first issue'.",
+    "ds": "Practice pandas, NumPy, Seaborn, and machine learning.",
+    "figma": "Great for UI/UX prototyping — use auto-layout and components.",
+    "devops": "Learn CI/CD, Docker, GitHub Actions, and cloud automation."
+  };
 
-  let matched = "Sorry! Couldn't recognize that. Try a clearer sketch or hit Help.";
+  const response = promptMap[sketchPrompt] || "Unrecognized sketch! Try drawing text from a real question.";
+  document.getElementById('bot-response').innerText = response;
 
-  for (let item of responses) {
-    if (item.keywords.some(k => sketchText.toLowerCase().includes(k))) {
-      matched = item.msg;
-      break;
-    }
-  }
-
-  setTimeout(() => {
-    document.getElementById('bot-response').innerText = matched;
-  }, 1000);
+  promptHistory.push({ prompt: response, time: getCurrentTime() });
+  updatePromptHistoryUI();
 }
 
-// Simulate OCR sketch recognition
+// 🧾 Update Time Machine Log
+function updatePromptHistoryUI() {
+  const list = document.getElementById('history-list');
+  list.innerHTML = '';
+  promptHistory.forEach(entry => {
+    const li = document.createElement('li');
+    li.textContent = `[${entry.time}] ${entry.prompt}`;
+    list.appendChild(li);
+  });
+}
+
+// 🔠 Simulated keyword from sketch (random for now)
 function generateRandomSketchKeyword() {
-  const keywords = [
-    "frontend", "backend", "fullstack", "ml", "cloud", "interview", "github",
-    "design", "roadmap", "motivation", "career switch", "opensource", "tools",
-    "figma", "ui", "ai", "aws", "resume", "youtube", "data science"
+  const samples = [
+    "frontend", "backend", "ai", "git", "interview", "resume", "cloud", "opensource",
+    "fullstack", "figma", "ds", "devops"
   ];
-  return keywords[Math.floor(Math.random() * keywords.length)];
+  return samples[Math.floor(Math.random() * samples.length)];
 }
 
-// 💡 Fun Fact Rotator
+// ✨ Fun Fact Rotator
 const facts = [
-  "Calligraphy comes from the Greek 'kallos' and 'graphe'.",
-  "Arabic calligraphy is a major form of Islamic art.",
-  "Japanese Shodō means 'the way of writing'.",
-  "Brush pens replaced bamboo and ink in modern calligraphy.",
-  "Roman capital letters inspire many modern fonts.",
-  "Chinese calligraphy dates back over 4000 years.",
-  "Calligraphy boosts mindfulness and patience.",
-  "Fur and neon brushes make digital calligraphy vibrant.",
-  "In Korea, calligraphy is a spiritual tradition.",
-  "Italic script was created during the Renaissance.",
-  "Copperplate is still used for certificates today.",
-  "You can now do calligraphy on tablets with styluses!",
-  "Brush lettering is trending on Instagram and Etsy.",
-  "Many logos use hand-drawn calligraphy fonts.",
-  "Arabic scripts are often found in mosque decor.",
-  "Gothic styles dominated medieval Europe manuscripts.",
-  "Calligraphy is considered visual art in Japan.",
-  "Script fonts evolved from real calligraphy styles.",
-  "Modern calligraphy mixes graffiti, cursive, and typography.",
-  "Calligraphy can be therapeutic and meditative."
+  "Calligraphy means 'beautiful writing' in Greek.",
+  "Japanese calligraphy is known as Shodō.",
+  "Roman capital letters inspired Western calligraphy.",
+  "Modern calligraphy is popular on social media.",
+  "Arabic calligraphy is both text and art.",
+  "Calligraphy promotes mindfulness and concentration.",
+  "Copperplate and Gothic scripts remain popular today.",
+  "Calligraphy tools evolved from reeds to styluses.",
+  "Chinese calligraphy dates back 4000+ years.",
+  "Brush lettering is booming on Etsy & Pinterest."
 ];
 
 function rotateFacts() {
-  const factText = document.getElementById('fact-text');
+  const el = document.getElementById('fact-text');
   let i = 0;
   setInterval(() => {
-    factText.textContent = facts[i % facts.length];
+    el.textContent = facts[i % facts.length];
     i++;
   }, 10000);
 }
 
 rotateFacts();
 applyBackground('plain');
+
