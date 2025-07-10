@@ -5,10 +5,12 @@ let painting = false;
 let brushSize = 2;
 let brushColor = '#000000';
 let brushStyle = 'round';
+let fontEffect = 'smooth';
 
 const brushSizeEl = document.getElementById('brush-size');
 const brushColorEl = document.getElementById('brush-color');
 const brushStyleEl = document.getElementById('brush-style');
+const fontStyleEl = document.getElementById('font-style'); // NEW
 
 brushSizeEl.addEventListener('change', () => {
   brushSize = parseInt(brushSizeEl.value);
@@ -20,6 +22,10 @@ brushColorEl.addEventListener('input', () => {
 
 brushStyleEl.addEventListener('change', () => {
   brushStyle = brushStyleEl.value;
+});
+
+fontStyleEl.addEventListener('change', () => {
+  fontEffect = fontStyleEl.value;
 });
 
 canvas.addEventListener('mousedown', () => painting = true);
@@ -44,23 +50,108 @@ document.getElementById('help').addEventListener('click', () => {
 - "Which programming languages should I master?"`);
 });
 
-ctx.lineCap = brushStyle;
-
 function draw(e) {
   if (!painting) return;
 
-  ctx.lineWidth = brushSize;
-  ctx.strokeStyle = brushColor;
   ctx.lineCap = brushStyle;
+  ctx.strokeStyle = brushColor;
+  ctx.lineWidth = brushSize;
 
-  ctx.lineTo(e.offsetX, e.offsetY);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(e.offsetX, e.offsetY);
+  const x = e.offsetX;
+  const y = e.offsetY;
+
+  switch (fontEffect) {
+    case 'smooth':
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      break;
+
+    case 'dotted':
+      ctx.beginPath();
+      ctx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
+      ctx.fillStyle = brushColor;
+      ctx.fill();
+      break;
+
+    case 'sketchy':
+      ctx.lineTo(x + Math.random() * 2 - 1, y + Math.random() * 2 - 1);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      break;
+
+    case 'spray':
+      for (let i = 0; i < 10; i++) {
+        const offsetX = Math.random() * brushSize - brushSize / 2;
+        const offsetY = Math.random() * brushSize - brushSize / 2;
+        ctx.fillStyle = brushColor;
+        ctx.fillRect(x + offsetX, y + offsetY, 1, 1);
+      }
+      break;
+
+    case 'fur':
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.random() * 10 - 5, y + Math.random() * 10 - 5);
+        ctx.stroke();
+      }
+      break;
+
+    case 'neon':
+      ctx.shadowColor = brushColor;
+      ctx.shadowBlur = 10;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.shadowBlur = 0;
+      break;
+
+    case 'glow':
+      ctx.shadowColor = brushColor;
+      ctx.shadowBlur = 20;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.shadowBlur = 0;
+      break;
+
+    case 'ink':
+      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.globalAlpha = 1;
+      break;
+
+    case 'drip':
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      if (Math.random() > 0.95) {
+        ctx.beginPath();
+        ctx.arc(x, y + 10, brushSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      break;
+
+    case 'calligraphy':
+      ctx.lineWidth = brushSize;
+      ctx.lineTo(x + brushSize / 2, y - brushSize / 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      break;
+  }
 }
 
 function recognizeSketch() {
-  // Simulated AI recognition (demo)
   const prompts = {
     "frontend": "Master HTML, CSS, JavaScript, and a framework like React.",
     "internships": "Build a GitHub portfolio, network on LinkedIn, and practice DSA.",
@@ -77,3 +168,4 @@ function recognizeSketch() {
     document.getElementById('bot-response').innerText = response;
   }, 1000);
 }
+
