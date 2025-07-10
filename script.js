@@ -1,10 +1,25 @@
 const canvas = document.getElementById('draw-area');
 const ctx = canvas.getContext('2d');
+
 let painting = false;
 let brushSize = 2;
+let brushColor = '#000000';
+let brushStyle = 'round';
 
-document.getElementById('brush').addEventListener('change', (e) => {
-  brushSize = parseInt(e.target.value);
+const brushSizeEl = document.getElementById('brush-size');
+const brushColorEl = document.getElementById('brush-color');
+const brushStyleEl = document.getElementById('brush-style');
+
+brushSizeEl.addEventListener('change', () => {
+  brushSize = parseInt(brushSizeEl.value);
+});
+
+brushColorEl.addEventListener('input', () => {
+  brushColor = brushColorEl.value;
+});
+
+brushStyleEl.addEventListener('change', () => {
+  brushStyle = brushStyleEl.value;
 });
 
 canvas.addEventListener('mousedown', () => painting = true);
@@ -21,7 +36,7 @@ document.getElementById('clear').addEventListener('click', () => {
 });
 
 document.getElementById('help').addEventListener('click', () => {
-  alert(`🧠 Sample Questions I understand:
+  alert(`🧠 Sample Questions I understand:\n
 - "How can I become a frontend developer?"
 - "Tips for cracking SDE internships"
 - "Best free coding resources"
@@ -29,13 +44,15 @@ document.getElementById('help').addEventListener('click', () => {
 - "Which programming languages should I master?"`);
 });
 
-ctx.lineWidth = brushSize;
-ctx.lineCap = 'round';
+ctx.lineCap = brushStyle;
 
 function draw(e) {
   if (!painting) return;
+
   ctx.lineWidth = brushSize;
-  ctx.strokeStyle = '#000';
+  ctx.strokeStyle = brushColor;
+  ctx.lineCap = brushStyle;
+
   ctx.lineTo(e.offsetX, e.offsetY);
   ctx.stroke();
   ctx.beginPath();
@@ -43,13 +60,13 @@ function draw(e) {
 }
 
 function recognizeSketch() {
-  // Simulated recognition using randomness for demo
+  // Simulated AI recognition (demo)
   const prompts = {
-    "frontend": "To become a frontend dev, master HTML, CSS, JS and frameworks like React.",
-    "internships": "Build projects, contribute to open source, and network on LinkedIn for SDE roles.",
-    "resources": "Free resources include freeCodeCamp, CS50, GeeksforGeeks, and LeetCode.",
-    "AI": "Top AI skills: ML, DL, Python, TensorFlow, PyTorch, NLP, and data engineering.",
-    "languages": "Top languages: Python, JavaScript, Java, Go, and Rust depending on your goals."
+    "frontend": "Master HTML, CSS, JavaScript, and a framework like React.",
+    "internships": "Build a GitHub portfolio, network on LinkedIn, and practice DSA.",
+    "resources": "Try freeCodeCamp, CS50, GeeksforGeeks, and LeetCode.",
+    "AI": "Learn Python, ML algorithms, TensorFlow, PyTorch, and NLP basics.",
+    "languages": "Start with Python, JavaScript, and then explore Java or Go."
   };
 
   const keywords = Object.keys(prompts);
