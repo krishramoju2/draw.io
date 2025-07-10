@@ -13,7 +13,6 @@ const brushStyleEl = document.getElementById('brush-style');
 const brushTypeEl = document.getElementById('font-style');
 const bgStyleEl = document.getElementById('bg-style');
 
-// Brush config events
 brushSizeEl.addEventListener('change', () => {
   brushSize = parseInt(brushSizeEl.value);
 });
@@ -50,29 +49,15 @@ document.getElementById('clear').addEventListener('click', () => {
 
 document.getElementById('help').addEventListener('click', () => {
   alert(`🧠 Sample Questions I understand:\n
-- "How can I become a frontend developer?"
-- "Tips for cracking SDE internships"
-- "Best free coding resources"
-- "What are top AI skills to learn?"
-- "Which programming languages should I master?"
-- "Is open source important?"
-- "How do I build a portfolio?"
-- "What are best design tools?"
-- "Where can I learn DSA?"
-- "Which company is best for interns?"
-- "How to crack interviews?"
-- "How to stay motivated as a developer?"
-- "Is ChatGPT useful for coding?"
-- "How to switch from non-CS to tech?"
-- "Should I learn cloud computing?"
-- "Which platform to publish projects?"
-- "Best YouTube channels to learn dev?"
-- "Frontend vs Backend vs Fullstack?"
-- "How do I contribute to open source?"
-- "What’s the best way to learn Git?"`);
+  - “How do I become a frontend/backend/fullstack developer?”
+  - “Best sites to learn AI/DSA/Git/cloud/etc.”
+  - “Top languages, tools, frameworks in 2025”
+  - “Internship, career advice, cracking interviews”
+  - “Portfolio/project hosting, open source, design tools”
+  - “Switching careers, staying motivated, time management”
+  - and more!`);
 });
 
-// Drawing function
 function draw(e) {
   if (!painting) return;
 
@@ -94,47 +79,6 @@ function draw(e) {
         ctx.fillRect(offsetX, offsetY, 1, 1);
       }
       break;
-    case 'fur':
-      for (let i = 0; i < 20; i++) {
-        let offsetX = e.offsetX + Math.random() * 10 - 5;
-        let offsetY = e.offsetY + Math.random() * 10 - 5;
-        ctx.beginPath();
-        ctx.moveTo(e.offsetX, e.offsetY);
-        ctx.lineTo(offsetX, offsetY);
-        ctx.stroke();
-      }
-      break;
-    case 'glow':
-      ctx.shadowColor = brushColor;
-      ctx.shadowBlur = 15;
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      break;
-    case 'neon':
-      ctx.shadowColor = '#0ff';
-      ctx.shadowBlur = 20;
-      ctx.strokeStyle = brushColor;
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      break;
-    case 'zigzag':
-      ctx.lineTo(e.offsetX + 3, e.offsetY + (Math.random() * 4 - 2));
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      break;
-    case 'dashline':
-      ctx.setLineDash([10, 10]);
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      ctx.setLineDash([]);
-      break;
     default:
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
@@ -143,7 +87,7 @@ function draw(e) {
   }
 }
 
-// Background styles
+// Background options
 function applyBackground(type) {
   const bg = canvas;
   switch (type) {
@@ -164,79 +108,84 @@ function applyBackground(type) {
     case 'paper':
       bg.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/paper-fibers.png')";
       break;
-    case 'blueprint':
-      bg.style.backgroundColor = '#1e3a5f';
-      bg.style.backgroundImage = "linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)";
-      bg.style.backgroundSize = "20px 20px";
-      break;
-    case 'chalkboard':
-      bg.style.backgroundColor = '#2c2c2c';
-      bg.style.backgroundImage = "none";
-      break;
-    case 'graph':
-      bg.style.backgroundImage = "linear-gradient(#ccc 1px, transparent 1px), linear-gradient(90deg, #ccc 1px, transparent 1px)";
-      bg.style.backgroundSize = "40px 40px";
-      break;
     default:
       bg.style.backgroundColor = '#ffffff';
       bg.style.backgroundImage = '';
   }
 }
 
-// Simulated AI response
+// 🔍 Vast prompt support
 function recognizeSketch() {
-  const prompts = {
-    frontend: "Master HTML, CSS, JS & React for frontend dev.",
-    internships: "Build projects, practice DSA & network online.",
-    resources: "freeCodeCamp, CS50, GFG, and LeetCode are great!",
-    AI: "Learn Python, ML/DL frameworks, and real datasets.",
-    languages: "Start with Python, then explore JS, Go, or Rust.",
-    opensource: "GitHub and Hacktoberfest are good starting points.",
-    portfolio: "Host projects on GitHub or a personal website.",
-    design: "Try Figma, Canva, and Adobe XD for design skills.",
-    DSA: "Master arrays, trees, graphs using LeetCode & GFG.",
-    bestcompanies: "Look for startups and Tier 2 product firms.",
-    interviews: "Use InterviewBit, Pramp, and mock interviews.",
-    motivation: "Build what you love. Follow dev YouTubers!",
-    chatgpt: "ChatGPT can help with debugging and learning.",
-    switch: "Non-CS? Start with Python, DSA & projects.",
-    cloud: "AWS, GCP & Azure are in high demand.",
-    publish: "Use Medium, Dev.to, or Hashnode to write blogs.",
-    youtube: "Follow WebDevSimplified, Amigoscode, and CodeWithHarry.",
-    fullstack: "Frontend + Backend (Node/Express, Django).",
-    git: "Use GitKraken or command line; learn branching.",
-    roadmap: "Explore roadmap.sh and choose your domain."
-  };
+  const sketchText = generateRandomSketchKeyword(); // replace with OCR if real
+  const responses = [
+    { keywords: ["frontend", "web dev"], msg: "Learn HTML, CSS, JavaScript, and React or Vue." },
+    { keywords: ["backend", "server"], msg: "Node.js, Express, Django or FastAPI are solid choices." },
+    { keywords: ["fullstack"], msg: "Combine frontend + backend, often with MERN or Django stack." },
+    { keywords: ["ai", "machine", "ml"], msg: "Start with Python, learn sklearn, TensorFlow, NLP, and DL." },
+    { keywords: ["data science", "ds"], msg: "Python, pandas, matplotlib, and real-world datasets." },
+    { keywords: ["internship", "job", "resume"], msg: "Build projects, use LinkedIn, and tailor your resume." },
+    { keywords: ["cloud", "aws", "azure", "gcp"], msg: "Start with free tiers, then dive into certifications." },
+    { keywords: ["git", "github", "version"], msg: "Learn basic Git commands and collaborate on GitHub." },
+    { keywords: ["design", "figma", "ui"], msg: "Figma and Canva are great for wireframes and UI mocks." },
+    { keywords: ["youtube", "channels"], msg: "Check out Fireship, CodeWithHarry, Amigoscode, Dev Ed." },
+    { keywords: ["opensource"], msg: "Start with beginner-friendly repos tagged 'good first issue'." },
+    { keywords: ["portfolio", "host"], msg: "Use GitHub Pages, Netlify, or Vercel to deploy sites." },
+    { keywords: ["roadmap"], msg: "Explore roadmap.sh for structured dev learning paths." },
+    { keywords: ["motivation", "focus"], msg: "Break tasks down, join dev communities, celebrate progress." },
+    { keywords: ["tools", "editors"], msg: "VS Code, Git, Chrome DevTools, and Postman are essential." },
+    { keywords: ["crack", "interview"], msg: "Practice LeetCode, mock interviews, and behavioral Qs." },
+    { keywords: ["freelance"], msg: "Use platforms like Upwork, Fiverr, and Toptal. Build a portfolio." },
+    { keywords: ["time", "manage"], msg: "Try Pomodoro, Notion for planning, and daily 3-goal rule." },
+    { keywords: ["career", "switch"], msg: "Start with Python, build small apps, get certs, show work." },
+    { keywords: ["learning", "start"], msg: "Start small, stay consistent, build one project per topic." },
+  ];
 
-  const keys = Object.keys(prompts);
-  const response = prompts[keys[Math.floor(Math.random() * keys.length)]];
+  let matched = "Sorry! Couldn't recognize that. Try a clearer sketch or hit Help.";
+
+  for (let item of responses) {
+    if (item.keywords.some(k => sketchText.toLowerCase().includes(k))) {
+      matched = item.msg;
+      break;
+    }
+  }
+
   setTimeout(() => {
-    document.getElementById('bot-response').innerText = response;
-  }, 800);
+    document.getElementById('bot-response').innerText = matched;
+  }, 1000);
 }
 
-// Fun Fact Rotator
+// Simulate OCR sketch recognition
+function generateRandomSketchKeyword() {
+  const keywords = [
+    "frontend", "backend", "fullstack", "ml", "cloud", "interview", "github",
+    "design", "roadmap", "motivation", "career switch", "opensource", "tools",
+    "figma", "ui", "ai", "aws", "resume", "youtube", "data science"
+  ];
+  return keywords[Math.floor(Math.random() * keywords.length)];
+}
+
+// 💡 Fun Fact Rotator
 const facts = [
   "Calligraphy comes from the Greek 'kallos' and 'graphe'.",
+  "Arabic calligraphy is a major form of Islamic art.",
   "Japanese Shodō means 'the way of writing'.",
-  "Arabic calligraphy evolved with Islamic art.",
-  "Quills were used in medieval European calligraphy.",
-  "Copperplate and Spencerian are Western scripts.",
-  "Chinese calligraphy dates back 4000 years.",
-  "Brush lettering is popular on social media.",
-  "Calligraphy boosts mindfulness and focus.",
-  "Pointed pen calligraphy revolutionized writing.",
-  "Kufic is one of the earliest Arabic scripts.",
-  "Italic script originated during the Renaissance.",
-  "Korean calligraphy is spiritual and artistic.",
-  "Digital calligraphy blends type and hand art.",
-  "Calligraphy used to be taught in Chinese schools.",
-  "Roman capitals inspired modern Latin scripts.",
-  "Chalkboard calligraphy is used in cafes.",
-  "Brush pens replaced ink + bamboo brushes.",
-  "Neon calligraphy is a digital trend.",
-  "Calligraphy is used in wedding invites.",
-  "Arabic calligraphy often decorates mosques."
+  "Brush pens replaced bamboo and ink in modern calligraphy.",
+  "Roman capital letters inspire many modern fonts.",
+  "Chinese calligraphy dates back over 4000 years.",
+  "Calligraphy boosts mindfulness and patience.",
+  "Fur and neon brushes make digital calligraphy vibrant.",
+  "In Korea, calligraphy is a spiritual tradition.",
+  "Italic script was created during the Renaissance.",
+  "Copperplate is still used for certificates today.",
+  "You can now do calligraphy on tablets with styluses!",
+  "Brush lettering is trending on Instagram and Etsy.",
+  "Many logos use hand-drawn calligraphy fonts.",
+  "Arabic scripts are often found in mosque decor.",
+  "Gothic styles dominated medieval Europe manuscripts.",
+  "Calligraphy is considered visual art in Japan.",
+  "Script fonts evolved from real calligraphy styles.",
+  "Modern calligraphy mixes graffiti, cursive, and typography.",
+  "Calligraphy can be therapeutic and meditative."
 ];
 
 function rotateFacts() {
@@ -249,4 +198,4 @@ function rotateFacts() {
 }
 
 rotateFacts();
-applyBackground('plain'); // Set default bg
+applyBackground('plain');
