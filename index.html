@@ -12,10 +12,10 @@
       <div class="tool-group">
         <label for="brush-size">Size:</label>
         <select id="brush-size">
-          <option value="2">Fine (2px)</option>
-          <option value="5">Regular (5px)</option>
-          <option value="10">Bold (10px)</option>
-          <option value="20">Ink Drop (20px)</option>
+          <option value="2">Fine</option>
+          <option value="5">Regular</option>
+          <option value="10">Bold</option>
+          <option value="20">Heavy</option>
         </select>
       </div>
       <div class="tool-group">
@@ -31,7 +31,7 @@
         </select>
       </div>
       <div class="tool-group">
-        <label for="font-style">Font Style:</label>
+        <label for="font-style">Brush Style:</label>
         <select id="font-style">
           <option value="smooth">Smooth</option>
           <option value="dotted">Dotted</option>
@@ -43,6 +43,11 @@
           <option value="ink">Ink</option>
           <option value="drip">Drip</option>
           <option value="calligraphy">Calligraphy</option>
+          <option value="pixel">Pixel</option>
+          <option value="zigzag">Zigzag</option>
+          <option value="dashline">Dashline</option>
+          <option value="charcoal">Charcoal</option>
+          <option value="starburst">Starburst</option>
         </select>
       </div>
       <div class="tool-group">
@@ -53,6 +58,11 @@
           <option value="dots">Dots</option>
           <option value="ruled">Ruled</option>
           <option value="gradient">Gradient</option>
+          <option value="paper">Paper Texture</option>
+          <option value="blueprint">Blueprint</option>
+          <option value="night">Night Mode</option>
+          <option value="chalkboard">Chalkboard</option>
+          <option value="graph">Graph Paper</option>
         </select>
       </div>
       <button id="clear">Clear</button>
@@ -60,7 +70,7 @@
     </div>
   </header>
 
-  <canvas id="draw-area" width="900" height="450"></canvas>
+  <canvas id="draw-area" width="1000" height="500"></canvas>
 
   <div class="response">
     <h2>🤖 StylusBot Response:</h2>
