@@ -9,23 +9,33 @@ body {
 }
 
 header {
-  padding: 1rem;
-  text-align: center;
   background: #292944;
   width: 100%;
   box-shadow: 0 2px 5px #000;
+  padding: 1rem;
+  text-align: center;
 }
 
-.tools {
-  margin-top: 0.5rem;
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-select, button {
-  margin: 0 5px;
+.tool-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+select, input[type="color"], button {
   padding: 0.5rem;
   border-radius: 8px;
   border: none;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 canvas {
@@ -38,9 +48,10 @@ canvas {
 
 .response {
   padding: 1rem;
-  max-width: 800px;
+  max-width: 900px;
   text-align: center;
   background: #1c1c2c;
   border-radius: 10px;
   box-shadow: 0 0 10px #222;
 }
+
