@@ -21,7 +21,7 @@
       </div>
       <div class="tool-group">
         <label for="brush-color">Color</label>
-        <input type="color" id="brush-color" />
+        <input type="color" id="brush-color" value="#000000" />
       </div>
       <div class="tool-group">
         <label for="brush-style">Cap</label>
@@ -74,6 +74,11 @@
   <main>
     <canvas id="draw-area" width="1000" height="500"></canvas>
 
+    <div class="fun-fact glass-panel">
+      <strong>🪶 Calligraphy Fact:</strong>
+      <p id="fact-text">Calligraphy comes from the Greek words for "beauty" and "writing".</p>
+    </div>
+
     <div class="response glass-panel">
       <h2>🤖 StylusBot Response:</h2>
       <p id="bot-response">Draw a question to get an answer!</p>
@@ -83,5 +88,4 @@
   <script src="script.js"></script>
 </body>
 </html>
-
 
