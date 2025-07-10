@@ -30,7 +30,9 @@ header {
   gap: 0.5rem;
 }
 
-select, input[type="color"], button {
+select,
+input[type="color"],
+button {
   padding: 0.5rem;
   border-radius: 8px;
   border: none;
@@ -54,4 +56,3 @@ canvas {
   border-radius: 10px;
   box-shadow: 0 0 10px #222;
 }
-
