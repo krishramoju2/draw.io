@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,20 +8,34 @@
 <body>
   <header>
     <h1>🖌️ UpskillBot</h1>
-    <div class="tools">
-      <label for="brush">Calligraphy Style:</label>
-      <select id="brush">
-        <option value="2">Fine</option>
-        <option value="5">Regular</option>
-        <option value="10">Bold</option>
-        <option value="20">Ink Drop</option>
-      </select>
+    <div class="toolbar">
+      <div class="tool-group">
+        <label for="brush-size">Size:</label>
+        <select id="brush-size">
+          <option value="2">Fine (2px)</option>
+          <option value="5">Regular (5px)</option>
+          <option value="10">Bold (10px)</option>
+          <option value="20">Ink Drop (20px)</option>
+        </select>
+      </div>
+      <div class="tool-group">
+        <label for="brush-color">Color:</label>
+        <input type="color" id="brush-color" value="#000000">
+      </div>
+      <div class="tool-group">
+        <label for="brush-style">Style:</label>
+        <select id="brush-style">
+          <option value="round">Round</option>
+          <option value="square">Square</option>
+          <option value="butt">Flat</option>
+        </select>
+      </div>
       <button id="clear">Clear</button>
       <button id="help">Help</button>
     </div>
   </header>
 
-  <canvas id="draw-area" width="800" height="400"></canvas>
+  <canvas id="draw-area" width="900" height="450"></canvas>
 
   <div class="response">
     <h2>🤖 StylusBot Response:</h2>
