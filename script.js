@@ -6,16 +6,22 @@ let brushSize = 2;
 let brushColor = '#000000';
 let brushStyle = 'round';
 let fontEffect = 'smooth';
+let bgStyle = 'plain';
 
 const brushSizeEl = document.getElementById('brush-size');
 const brushColorEl = document.getElementById('brush-color');
 const brushStyleEl = document.getElementById('brush-style');
 const fontStyleEl = document.getElementById('font-style');
+const bgStyleEl = document.getElementById('bg-style');
 
 brushSizeEl.addEventListener('change', () => brushSize = parseInt(brushSizeEl.value));
 brushColorEl.addEventListener('input', () => brushColor = brushColorEl.value);
 brushStyleEl.addEventListener('change', () => brushStyle = brushStyleEl.value);
 fontStyleEl.addEventListener('change', () => fontEffect = fontStyleEl.value);
+bgStyleEl.addEventListener('change', () => {
+  bgStyle = bgStyleEl.value;
+  applyBackground();
+});
 
 canvas.addEventListener('mousedown', () => painting = true);
 canvas.addEventListener('mouseup', () => {
@@ -27,6 +33,7 @@ canvas.addEventListener('mousemove', draw);
 
 document.getElementById('clear').addEventListener('click', () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  applyBackground();
   document.getElementById('bot-response').innerText = "Draw a question to get an answer!";
 });
 
@@ -127,7 +134,6 @@ function draw(e) {
       ctx.moveTo(x, y);
       break;
     case 'calligraphy':
-      ctx.lineWidth = brushSize;
       ctx.lineTo(x + brushSize / 2, y - brushSize / 2);
       ctx.stroke();
       ctx.beginPath();
@@ -136,18 +142,80 @@ function draw(e) {
   }
 }
 
+function applyBackground() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  switch (bgStyle) {
+    case 'plain':
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
+
+    case 'grid':
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#e0e0e0';
+      for (let x = 0; x < canvas.width; x += 25) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 25) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      break;
+
+    case 'dots':
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#c0c0c0';
+      for (let x = 10; x < canvas.width; x += 25) {
+        for (let y = 10; y < canvas.height; y += 25) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      break;
+
+    case 'ruled':
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#add8e6';
+      for (let y = 20; y < canvas.height; y += 30) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      break;
+
+    case 'gradient':
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, '#f8f8ff');
+      gradient.addColorStop(1, '#e0f7fa');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
+  }
+}
+
 function recognizeSketch() {
   const prompts = {
-    "frontend": "Master HTML, CSS, JavaScript, and frameworks like React.",
-    "internships": "Contribute to GitHub, attend hackathons, and practice LeetCode daily.",
-    "resources": "Explore freeCodeCamp, CS50, Odin Project, GeeksforGeeks, and Khan Academy.",
-    "AI": "Learn ML, DL, NLP with Python, TensorFlow, HuggingFace, and real datasets.",
-    "languages": "Top picks: Python, JavaScript, Go, Rust, and Java depending on domain.",
-    "faang": "Focus on DSA, systems design, and mock interviews. Use LeetCode & InterviewBit.",
-    "roadmap": "Start with Python → Pandas → ML → DL → Projects → Portfolio → Apply!",
-    "open source": "Try EddieHub, GirlScript, MLH, or issues labeled 'good first issue' on GitHub.",
-    "resume": "Highlight projects, online courses, GitHub activity, and clear achievements.",
-    "cloud": "Learn AWS, GCP or Azure basics. Get hands-on with deployments and CI/CD."
+    "frontend": "Master HTML, CSS, JS, and frameworks like React or Vue.",
+    "internships": "Build projects, contribute to GitHub, and practice LeetCode.",
+    "resources": "Use freeCodeCamp, GeeksforGeeks, CS50, and LeetCode daily.",
+    "AI": "Learn Python, ML, NLP, deep learning with TensorFlow or PyTorch.",
+    "languages": "Start with Python, then JavaScript or Go. Explore Rust for performance.",
+    "faang": "Strong DSA, systems design, real projects, and mock interviews are key.",
+    "roadmap": "Python → Numpy/Pandas → ML → DL → Projects → Kaggle → Resume.",
+    "open source": "Find beginner-friendly issues on GitHub via 'good first issue' tag.",
+    "resume": "Highlight GitHub, skills, projects. No filler words—show impact.",
+    "cloud": "Start with AWS, deploy apps, learn CI/CD tools like GitHub Actions."
   };
 
   const keywords = Object.keys(prompts);
@@ -158,3 +226,7 @@ function recognizeSketch() {
     document.getElementById('bot-response').innerText = response;
   }, 1000);
 }
+
+// Initialize background on load
+applyBackground();
+
