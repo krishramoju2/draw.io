@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stylus Chatbot - Upskilling Guru</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>UpskillBot - Stylus Chatbot</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="glass-header">
+  <header>
     <h1>🖌️ UpskillBot</h1>
     <div class="toolbar">
       <div class="tool-group">
-        <label for="brush-size">Size</label>
+        <label for="brush-size">Size:</label>
         <select id="brush-size">
           <option value="2">Fine</option>
           <option value="5">Regular</option>
           <option value="10">Bold</option>
-          <option value="20">Heavy</option>
+          <option value="20">Ink Drop</option>
         </select>
       </div>
       <div class="tool-group">
-        <label for="brush-color">Color</label>
-        <input type="color" id="brush-color" value="#000000" />
+        <label for="brush-color">Color:</label>
+        <input type="color" id="brush-color" value="#000000">
       </div>
       <div class="tool-group">
-        <label for="brush-style">Cap</label>
+        <label for="brush-style">Style:</label>
         <select id="brush-style">
           <option value="round">Round</option>
           <option value="square">Square</option>
@@ -32,27 +31,20 @@
         </select>
       </div>
       <div class="tool-group">
-        <label for="font-style">Brush</label>
+        <label for="font-style">Brush:</label>
         <select id="font-style">
           <option value="smooth">Smooth</option>
           <option value="dotted">Dotted</option>
-          <option value="sketchy">Sketchy</option>
           <option value="spray">Spray</option>
           <option value="fur">Fur</option>
-          <option value="neon">Neon</option>
           <option value="glow">Glow</option>
-          <option value="ink">Ink</option>
-          <option value="drip">Drip</option>
-          <option value="calligraphy">Calligraphy</option>
-          <option value="pixel">Pixel</option>
+          <option value="neon">Neon</option>
           <option value="zigzag">Zigzag</option>
-          <option value="dashline">Dashline</option>
-          <option value="charcoal">Charcoal</option>
-          <option value="starburst">Starburst</option>
+          <option value="dashline">Dashed</option>
         </select>
       </div>
       <div class="tool-group">
-        <label for="bg-style">Background</label>
+        <label for="bg-style">Background:</label>
         <select id="bg-style">
           <option value="plain">Plain</option>
           <option value="grid">Grid</option>
@@ -60,28 +52,28 @@
           <option value="ruled">Ruled</option>
           <option value="gradient">Gradient</option>
           <option value="paper">Paper</option>
-          <option value="blueprint">Blueprint</option>
-          <option value="night">Night</option>
-          <option value="chalkboard">Chalkboard</option>
-          <option value="graph">Graph</option>
         </select>
       </div>
-      <button id="clear">🧹 Clear</button>
-      <button id="help">❓ Help</button>
+      <button id="clear">Clear</button>
+      <button id="help">Help</button>
     </div>
   </header>
 
   <main>
-    <canvas id="draw-area" width="1000" height="500"></canvas>
+    <canvas id="draw-area" width="900" height="450"></canvas>
 
-    <div class="fun-fact glass-panel">
-      <strong>🪶 Calligraphy Fact:</strong>
-      <p id="fact-text">Calligraphy comes from the Greek words for "beauty" and "writing".</p>
-    </div>
-
-    <div class="response glass-panel">
+    <div class="response">
       <h2>🤖 StylusBot Response:</h2>
       <p id="bot-response">Draw a question to get an answer!</p>
+    </div>
+
+    <div class="history">
+      <h3>🕰️ Time Machine Log</h3>
+      <ul id="history-list"></ul>
+    </div>
+
+    <div class="fact-area">
+      <p id="fact-text">Fun calligraphy fact will rotate here every 10 seconds!</p>
     </div>
   </main>
 
