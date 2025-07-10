@@ -38,17 +38,17 @@ document.getElementById('clear').addEventListener('click', () => {
 });
 
 document.getElementById('help').addEventListener('click', () => {
-  alert(`🧠 Sample Questions I understand:\n
-- How can I become a frontend developer?
-- Tips for cracking SDE internships
-- Best free coding resources
-- What are top AI skills to learn?
-- Which programming languages should I master?
-- How to get into Google or FAANG?
-- Should I learn React or Angular?
-- What is the best roadmap for data science?
-- What are good open source projects for beginners?
-- How do I build a resume with no experience?`);
+  alert(`🧠 Sample Prompts:
+- How to learn backend?
+- Tips to crack FAANG
+- Best project ideas
+- AI skills to learn
+- Cloud career roadmap
+- How to freelance
+- Resume with no experience
+- How to learn DSA
+- Should I use Next.js or React?
+- Tools to become full-stack dev`);
 });
 
 function draw(e) {
@@ -115,7 +115,7 @@ function draw(e) {
       ctx.shadowBlur = 0;
       break;
     case 'ink':
-      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.globalAlpha = 0.4 + Math.random() * 0.5;
       ctx.lineTo(x, y);
       ctx.stroke();
       ctx.beginPath();
@@ -139,22 +139,56 @@ function draw(e) {
       ctx.beginPath();
       ctx.moveTo(x, y);
       break;
+    case 'pixel':
+      ctx.fillStyle = brushColor;
+      ctx.fillRect(x, y, brushSize, brushSize);
+      break;
+    case 'zigzag':
+      ctx.lineTo(x + (Math.sin(Date.now() / 10) * 5), y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      break;
+    case 'dashline':
+      ctx.setLineDash([5, 10]);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.setLineDash([]);
+      break;
+    case 'charcoal':
+      ctx.globalAlpha = 0.3;
+      for (let i = 0; i < 3; i++) {
+        ctx.lineTo(x + Math.random(), y + Math.random());
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.globalAlpha = 1;
+      break;
+    case 'starburst':
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(i) * 10, y + Math.sin(i) * 10);
+        ctx.stroke();
+      }
+      break;
   }
 }
 
 function applyBackground() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   switch (bgStyle) {
     case 'plain':
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       break;
-
     case 'grid':
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#e0e0e0';
+      ctx.strokeStyle = '#ddd';
       for (let x = 0; x < canvas.width; x += 25) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -168,11 +202,10 @@ function applyBackground() {
         ctx.stroke();
       }
       break;
-
     case 'dots':
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#c0c0c0';
+      ctx.fillStyle = '#ccc';
       for (let x = 10; x < canvas.width; x += 25) {
         for (let y = 10; y < canvas.height; y += 25) {
           ctx.beginPath();
@@ -181,45 +214,99 @@ function applyBackground() {
         }
       }
       break;
-
     case 'ruled':
       ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = '#add8e6';
-      for (let y = 20; y < canvas.height; y += 30) {
+      for (let y = 30; y < canvas.height; y += 30) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
       }
       break;
-
     case 'gradient':
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#f8f8ff');
+      gradient.addColorStop(0, '#fff');
       gradient.addColorStop(1, '#e0f7fa');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
+    case 'paper':
+      ctx.fillStyle = '#fdf6e3';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
+    case 'blueprint':
+      ctx.fillStyle = '#0a3d62';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#3dc1d3';
+      for (let x = 0; x < canvas.width; x += 30) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 30) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      break;
+    case 'night':
+      ctx.fillStyle = '#121212';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
+    case 'chalkboard':
+      ctx.fillStyle = '#2b2b2b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
+    case 'graph':
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#a0a0a0';
+      for (let x = 0; x < canvas.width; x += 20) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 20) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
       break;
   }
 }
 
 function recognizeSketch() {
   const prompts = {
-    "frontend": "Master HTML, CSS, JS, and frameworks like React or Vue.",
-    "internships": "Build projects, contribute to GitHub, and practice LeetCode.",
-    "resources": "Use freeCodeCamp, GeeksforGeeks, CS50, and LeetCode daily.",
-    "AI": "Learn Python, ML, NLP, deep learning with TensorFlow or PyTorch.",
-    "languages": "Start with Python, then JavaScript or Go. Explore Rust for performance.",
-    "faang": "Strong DSA, systems design, real projects, and mock interviews are key.",
-    "roadmap": "Python → Numpy/Pandas → ML → DL → Projects → Kaggle → Resume.",
-    "open source": "Find beginner-friendly issues on GitHub via 'good first issue' tag.",
-    "resume": "Highlight GitHub, skills, projects. No filler words—show impact.",
-    "cloud": "Start with AWS, deploy apps, learn CI/CD tools like GitHub Actions."
+    "frontend": "Master HTML, CSS, JS and React to get started in frontend dev.",
+    "backend": "Learn Node.js, Express, and database tech like MongoDB or SQL.",
+    "ai": "Start with Python, then ML libraries like TensorFlow and PyTorch.",
+    "freelance": "Use platforms like Upwork and Fiverr. Build a strong portfolio.",
+    "resume": "Highlight projects, GitHub, and use action words like 'built' and 'led'.",
+    "ds": "Data structures are crucial for interviews—start with arrays, stacks, trees.",
+    "leetcode": "Solve 100+ problems, focus on patterns. Practice daily.",
+    "open source": "Start with 'good first issue' on GitHub. Write clear PRs.",
+    "project ideas": "Make a blog, portfolio site, task manager, or ML-based app.",
+    "cloud": "Learn AWS basics—EC2, S3, Lambda. Try deploying your own project.",
+    "devops": "Understand Docker, CI/CD, GitHub Actions. Use Netlify/Vercel.",
+    "react vs next": "Use Next.js for SSR and SEO. React is better for SPAs.",
+    "career switch": "Build projects in your target field. Take certs like Coursera/Google.",
+    "fullstack": "Learn both frontend and backend. Try MERN or Django + React stack.",
+    "internships": "Apply early, tailor your resume, and reach out via LinkedIn.",
+    "faang": "Solve 300+ LeetCode, system design, and refine behavioral interview answers.",
+    "ml roadmap": "Start with math, then ML theory, then apply with scikit-learn/TensorFlow.",
+    "web3": "Learn Solidity, Ethereum, use MetaMask and deploy smart contracts.",
+    "design": "Use Figma, Canva. Practice UI/UX design for better product sense.",
+    "soft skills": "Communication, teamwork, and ownership matter as much as tech skills!"
   };
 
-  const keywords = Object.keys(prompts);
-  const randomKey = keywords[Math.floor(Math.random() * keywords.length)];
+  const keys = Object.keys(prompts);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
   const response = prompts[randomKey];
 
   setTimeout(() => {
@@ -227,6 +314,5 @@ function recognizeSketch() {
   }, 1000);
 }
 
-// Initialize background on load
+// Initialize on load
 applyBackground();
-
