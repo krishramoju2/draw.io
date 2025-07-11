@@ -1,110 +1,235 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Multi‑StylusBot Workspace</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <h1>🖌️ StylusBot Multi‑Window</h1>
-    <button id="new-window">➕ New StylusBot Window</button>
-  </header>
+const promptMap = {
+  "frontend": "Learn HTML, CSS, JS & React for frontend dev.",
+  "backend": "Explore Node.js, Express or Django for backend.",
+  "fullstack": "Master both frontend and backend. MERN is great.",
+  "ai": "Get started with Python, scikit-learn, and real datasets.",
+  "cloud": "Learn AWS/GCP, deploy projects, try certifications.",
+  "git": "Use GitHub, master commits, branches and pull requests.",
+  "resume": "Tailor it to job roles. Use Teal, Zety, or Rezi.",
+  "interview": "Practice on LeetCode, InterviewBit, Pramp.",
+  "opensource": "Contribute to GitHub projects with 'good first issue'.",
+  "ds": "Practice pandas, NumPy, Seaborn, and machine learning.",
+  "figma": "Great for UI/UX prototyping — use auto-layout and components.",
+  "devops": "Learn CI/CD, Docker, GitHub Actions, and cloud automation.",
+  "travel": "Plan with Google Flights, stay flexible, and journal daily!",
+  "productivity": "Use Pomodoro and block distractions with extensions.",
+  "motivation": "Start small and reward consistency.",
+  "language": "Try Duolingo or Memrise daily with spaced repetition.",
+  "funfact": "Bananas are berries, but strawberries aren't!"
+};
 
-  <div id="windows-container"></div>
+const facts = [
+  "Calligraphy means 'beautiful writing' in Greek.",
+  "Roman capitals inspired Gothic & modern type.",
+  "Arabic calligraphy blends language and art.",
+  "Shodō is Japanese brush calligraphy.",
+  "Copperplate is great for formal invites.",
+  "Calligraphy reduces stress and boosts focus.",
+  "India has ancient scripts like Brahmi.",
+  "Digital calligraphy uses styluses & tablets.",
+  "Brush lettering boomed on Instagram & Etsy.",
+  "Italic script is elegant and flowing."
+];
 
-  <!-- 🔁 Template for new stylus bots -->
-  <template id="stylusbot-template">
-    <div class="bot-window">
-      <div class="window-header">
-        <h2>🖋️ StylusBot</h2>
-        <button class="close-window">❌</button>
-      </div>
+const tracks = [
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+];
 
-      <div class="toolbar">
-        <div class="tool-group">
-          <label>Size:
-            <select class="brush-size">
-              <option value="2">Fine (2px)</option>
-              <option value="5">Regular (5px)</option>
-              <option value="10">Bold (10px)</option>
-              <option value="20">Ink Drop (20px)</option>
-            </select>
-          </label>
-        </div>
-        <div class="tool-group">
-          <label>Color:
-            <input type="color" class="brush-color" value="#000000">
-          </label>
-        </div>
-        <div class="tool-group">
-          <label>Style:
-            <select class="brush-style">
-              <option value="round">Round</option>
-              <option value="square">Square</option>
-              <option value="butt">Flat</option>
-            </select>
-          </label>
-        </div>
-        <div class="tool-group">
-          <label>Brush:
-            <select class="font-style">
-              <option value="smooth">Smooth</option>
-              <option value="dotted">Dotted</option>
-              <option value="spray">Spray</option>
-            </select>
-          </label>
-        </div>
-        <div class="tool-group">
-          <label>Background:
-            <select class="bg-style">
-              <option value="plain">Plain</option>
-              <option value="grid">Grid</option>
-              <option value="dots">Dots</option>
-              <option value="ruled">Ruled</option>
-              <option value="gradient">Gradient</option>
-              <option value="paper">Paper</option>
-            </select>
-          </label>
-        </div>
-        <button class="clear">Clear</button>
-        <button class="help">Help</button>
-        <button class="eraser-toggle">Eraser</button>
-        <button class="undo">Undo</button>
-        <button class="redo">Redo</button>
-      </div>
+document.getElementById("new-window").addEventListener("click", () => {
+  const template = document.getElementById("stylusbot-template");
+  const clone = template.content.cloneNode(true);
+  const container = clone.querySelector(".bot-window");
+  document.getElementById("windows-container").appendChild(container);
+  initializeBot(container);
+});
 
-      <canvas class="draw-area" width="900" height="450"></canvas>
+function initializeBot(container) {
+  const canvas = container.querySelector(".draw-area");
+  const ctx = canvas.getContext("2d");
 
-      <div class="response">
-        <h3>🤖 StylusBot Response:</h3>
-        <p class="bot-response">Draw a question to get an answer!</p>
-      </div>
+  let painting = false;
+  let brushSize = 2;
+  let brushColor = "#000000";
+  let brushStyle = "round";
+  let brushType = "smooth";
+  let erasing = false;
+  let canvasStates = [];
+  let redoStates = [];
+  const promptHistory = [];
 
-      <div class="history">
-        <h4>🕰️ Time Machine Log</h4>
-        <ul class="history-list"></ul>
-      </div>
+  saveState();
 
-      <div class="fact-area">
-        <p class="fact-text">Fun calligraphy fact will rotate here every 10 seconds!</p>
-      </div>
+  // 🔧 TOOLBAR SETUP
+  container.querySelector(".brush-size").addEventListener("change", e => brushSize = parseInt(e.target.value));
+  container.querySelector(".brush-color").addEventListener("input", e => brushColor = e.target.value);
+  container.querySelector(".brush-style").addEventListener("change", e => brushStyle = e.target.value);
+  container.querySelector(".font-style").addEventListener("change", e => brushType = e.target.value);
+  container.querySelector(".bg-style").addEventListener("change", e => applyBackground(e.target.value));
 
-      <div class="music-player">
-        <h4>🎶 LoFi Vibes</h4>
-        <audio class="audio" controls autoplay>
-          <source class="audio-source" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-          Your browser does not support the audio element.
-        </audio>
-        <div class="music-controls">
-          <button class="prev-track">⏮️ Prev</button>
-          <button class="next-track">⏭️ Next</button>
-          <input type="range" class="volume-control" min="0" max="1" step="0.01" value="0.5">
-        </div>
-      </div>
-    </div>
-  </template>
+  container.querySelector(".eraser-toggle").addEventListener("click", e => {
+    erasing = !erasing;
+    e.target.classList.toggle("active", erasing);
+  });
 
-  <script src="script.js"></script>
-</body>
-</html>
+  container.querySelector(".undo").addEventListener("click", () => {
+    if (canvasStates.length > 1) {
+      redoStates.push(canvasStates.pop());
+      restoreState(canvasStates[canvasStates.length - 1]);
+    }
+  });
+
+  container.querySelector(".redo").addEventListener("click", () => {
+    if (redoStates.length > 0) {
+      const state = redoStates.pop();
+      canvasStates.push(state);
+      restoreState(state);
+    }
+  });
+
+  container.querySelector(".clear").addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    container.querySelector(".bot-response").textContent = "Draw a question to get an answer!";
+    applyBackground(container.querySelector(".bg-style").value);
+  });
+
+  container.querySelector(".help").addEventListener("click", () => {
+    alert("🧠 Try drawing about:\n- fullstack, devops, resume\n- motivation, git, funfact");
+  });
+
+  canvas.addEventListener("mousedown", () => painting = true);
+  canvas.addEventListener("mouseup", () => {
+    painting = false;
+    ctx.beginPath();
+    saveState();
+    recognizeSketch();
+  });
+  canvas.addEventListener("mousemove", draw);
+
+  function draw(e) {
+    if (!painting) return;
+    ctx.lineWidth = brushSize;
+    ctx.strokeStyle = erasing ? "#ffffff" : brushColor;
+    ctx.lineCap = brushStyle;
+
+    if (brushType === "dotted") {
+      ctx.beginPath();
+      ctx.arc(e.offsetX, e.offsetY, brushSize / 2, 0, 2 * Math.PI);
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+    } else if (brushType === "spray") {
+      for (let i = 0; i < 10; i++) {
+        const x = e.offsetX + Math.random() * brushSize - brushSize / 2;
+        const y = e.offsetY + Math.random() * brushSize - brushSize / 2;
+        ctx.fillRect(x, y, 1, 1);
+      }
+    } else {
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    }
+  }
+
+  function saveState() {
+    canvasStates.push(canvas.toDataURL());
+    if (canvasStates.length > 100) canvasStates.shift();
+    redoStates = [];
+  }
+
+  function restoreState(dataUrl) {
+    const img = new Image();
+    img.src = dataUrl;
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+  }
+
+  function applyBackground(type) {
+    switch (type) {
+      case "grid":
+        canvas.style.backgroundImage = "linear-gradient(#ccc 1px, transparent 1px), linear-gradient(90deg, #ccc 1px, transparent 1px)";
+        canvas.style.backgroundSize = "20px 20px";
+        break;
+      case "dots":
+        canvas.style.backgroundImage = "radial-gradient(#ccc 1px, transparent 1px)";
+        canvas.style.backgroundSize = "20px 20px";
+        break;
+      case "ruled":
+        canvas.style.backgroundImage = "repeating-linear-gradient(#ccc 0 1px, transparent 1px 25px)";
+        break;
+      case "gradient":
+        canvas.style.backgroundImage = "linear-gradient(135deg, #f0f0f0, #ffffff)";
+        break;
+      case "paper":
+        canvas.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/paper-fibers.png')";
+        break;
+      default:
+        canvas.style.backgroundImage = "";
+        canvas.style.backgroundColor = "#ffffff";
+    }
+  }
+
+  function recognizeSketch() {
+    const keywords = Object.keys(promptMap);
+    const picked = keywords[Math.floor(Math.random() * keywords.length)];
+    const response = promptMap[picked];
+    container.querySelector(".bot-response").textContent = response;
+
+    promptHistory.push(`[${new Date().toLocaleTimeString()}] ${response}`);
+    updateHistory();
+  }
+
+  function updateHistory() {
+    const list = container.querySelector(".history-list");
+    list.innerHTML = "";
+    promptHistory.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = p;
+      list.appendChild(li);
+    });
+  }
+
+  // 🎵 Music Player
+  let trackIndex = 0;
+  const audio = container.querySelector(".audio");
+  const audioSource = container.querySelector(".audio-source");
+  const volumeSlider = container.querySelector(".volume-control");
+
+  container.querySelector(".next-track").addEventListener("click", () => {
+    trackIndex = (trackIndex + 1) % tracks.length;
+    updateTrack();
+  });
+  container.querySelector(".prev-track").addEventListener("click", () => {
+    trackIndex = (trackIndex - 1 + tracks.length) % tracks.length;
+    updateTrack();
+  });
+  volumeSlider.addEventListener("input", () => {
+    audio.volume = volumeSlider.value;
+  });
+
+  function updateTrack() {
+    audioSource.src = tracks[trackIndex];
+    audio.load();
+    audio.play();
+  }
+
+  audio.volume = 0.5;
+
+  // 💡 Fun Fact Rotator
+  const factText = container.querySelector(".fact-text");
+  let factIndex = 0;
+  setInterval(() => {
+    factText.textContent = facts[factIndex % facts.length];
+    factIndex++;
+  }, 10000);
+
+  // ❌ Close window
+  container.querySelector(".close-window").addEventListener("click", () => {
+    container.remove();
+  });
+
+  applyBackground("plain");
+}
