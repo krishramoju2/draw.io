@@ -1,10 +1,8 @@
-// ======================= GLOBAL INITIALIZATION =========================
 let botCounter = 1;
 
-// Called when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  addNewBot(); // Add the first bot
   document.getElementById('add-bot').addEventListener('click', addNewBot);
+  addNewBot(); // Add first bot
 });
 
 function addNewBot() {
@@ -18,10 +16,9 @@ function addNewBot() {
 
 function generateBotHTML(botId) {
   return `
-    <div class="toolbar" id="${botId}-toolbar">
+    <div class="toolbar">
       <select id="${botId}-brush-size">
-        <option value="2">2px</option><option value="5">5px</option>
-        <option value="10">10px</option><option value="20">20px</option>
+        <option value="2">2px</option><option value="5">5px</option><option value="10">10px</option><option value="20">20px</option>
       </select>
       <input type="color" id="${botId}-brush-color" value="#000000">
       <select id="${botId}-brush-style">
@@ -48,16 +45,17 @@ function generateBotHTML(botId) {
       <button id="${botId}-redo">Redo</button>
       <button id="${botId}-help">Help</button>
     </div>
-    <canvas id="${botId}-canvas" width="800" height="400" style="border:2px dashed #fff; margin-top:10px;"></canvas>
-    <div class="response"><p id="${botId}-response">Draw something!</p></div>
+    <canvas id="${botId}-canvas" width="800" height="400" style="border:2px dashed #000; margin:10px 0;"></canvas>
+    <div class="response"><strong>Bot Says:</strong> <span id="${botId}-response">Draw to ask something!</span></div>
     <ul id="${botId}-history" class="history-list"></ul>
+    <hr/>
   `;
 }
 
-// ====================== BOT INITIALIZATION =========================
 function initializeBotLogic(botId) {
   const canvas = document.getElementById(`${botId}-canvas`);
   const ctx = canvas.getContext('2d');
+
   let painting = false;
   let brushSize = 2;
   let brushColor = '#000000';
@@ -70,26 +68,25 @@ function initializeBotLogic(botId) {
 
   saveState();
 
-  // 🎨 TOOLBAR CONTROLS
+  // TOOLBAR
   document.getElementById(`${botId}-brush-size`).addEventListener('change', e => brushSize = parseInt(e.target.value));
   document.getElementById(`${botId}-brush-color`).addEventListener('input', e => brushColor = e.target.value);
   document.getElementById(`${botId}-brush-style`).addEventListener('change', e => brushStyle = e.target.value);
   document.getElementById(`${botId}-font-style`).addEventListener('change', e => brushType = e.target.value);
   document.getElementById(`${botId}-bg-style`).addEventListener('change', e => applyBackground(canvas, e.target.value));
 
-  // 🧹 ERASER
   document.getElementById(`${botId}-eraser-toggle`).addEventListener('click', () => {
     erasing = !erasing;
     document.getElementById(`${botId}-eraser-toggle`).classList.toggle('active', erasing);
   });
 
-  // 🔁 UNDO/REDO
   document.getElementById(`${botId}-undo`).addEventListener('click', () => {
     if (canvasStates.length > 1) {
       redoStates.push(canvasStates.pop());
       restoreState(canvasStates[canvasStates.length - 1]);
     }
   });
+
   document.getElementById(`${botId}-redo`).addEventListener('click', () => {
     if (redoStates.length > 0) {
       const state = redoStates.pop();
@@ -98,7 +95,16 @@ function initializeBotLogic(botId) {
     }
   });
 
-  // 🖌️ DRAWING
+  document.getElementById(`${botId}-clear`).addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById(`${botId}-response`).innerText = "Draw to ask something!";
+    applyBackground(canvas, document.getElementById(`${botId}-bg-style`).value);
+  });
+
+  document.getElementById(`${botId}-help`).addEventListener('click', () => {
+    alert(`🧠 Sample Prompts:\n- fullstack\n- devops\n- motivation\n- cloud\n- git\n- funfact`);
+  });
+
   canvas.addEventListener('mousedown', () => painting = true);
   canvas.addEventListener('mouseup', () => {
     painting = false;
@@ -114,80 +120,25 @@ function initializeBotLogic(botId) {
     ctx.strokeStyle = erasing ? '#ffffff' : brushColor;
     ctx.lineCap = brushStyle;
 
-    switch (brushType) {
-      case 'dotted':
-        ctx.beginPath();
-        ctx.arc(e.offsetX, e.offsetY, brushSize / 2, 0, 2 * Math.PI);
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.fill();
-        break;
-      case 'spray':
-        for (let i = 0; i < 10; i++) {
-          const x = e.offsetX + Math.random() * brushSize - brushSize / 2;
-          const y = e.offsetY + Math.random() * brushSize - brushSize / 2;
-          ctx.fillRect(x, y, 1, 1);
-        }
-        break;
-      default:
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(e.offsetX, e.offsetY);
+    if (brushType === 'dotted') {
+      ctx.beginPath();
+      ctx.arc(e.offsetX, e.offsetY, brushSize / 2, 0, 2 * Math.PI);
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+    } else if (brushType === 'spray') {
+      for (let i = 0; i < 10; i++) {
+        const x = e.offsetX + Math.random() * brushSize - brushSize / 2;
+        const y = e.offsetY + Math.random() * brushSize - brushSize / 2;
+        ctx.fillRect(x, y, 1, 1);
+      }
+    } else {
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
     }
   }
 
-  // 🎯 CLEAR + HELP
-  document.getElementById(`${botId}-clear`).addEventListener('click', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    document.getElementById(`${botId}-response`).innerText = "Draw a question to get an answer!";
-    applyBackground(canvas, document.getElementById(`${botId}-bg-style`).value);
-  });
-
-  document.getElementById(`${botId}-help`).addEventListener('click', () => {
-    alert(`🧠 Sample Prompts:\n- Fullstack, cloud, interview\n- Travel, motivation, fun facts`);
-  });
-
-  // 🧠 RESPONSE GENERATOR
-  function recognizeSketch() {
-    const promptMap = {
-      "frontend": "Learn HTML, CSS, JS & React for frontend dev.",
-      "backend": "Explore Node.js, Express or Django for backend.",
-      "fullstack": "Master both frontend and backend. MERN is great.",
-      "ai": "Get started with Python, scikit-learn, and real datasets.",
-      "cloud": "Learn AWS/GCP, deploy projects, try certifications.",
-      "git": "Use GitHub, master commits, branches and pull requests.",
-      "resume": "Tailor it to job roles. Use Teal, Zety, or Rezi.",
-      "interview": "Practice on LeetCode, InterviewBit, Pramp.",
-      "opensource": "Contribute to GitHub projects with 'good first issue'.",
-      "ds": "Practice pandas, NumPy, Seaborn, and machine learning.",
-      "figma": "Great for UI/UX prototyping — use auto-layout and components.",
-      "devops": "Learn CI/CD, Docker, GitHub Actions, and cloud automation.",
-      "travel": "Plan with Google Flights, stay flexible, and journal daily!",
-      "productivity": "Use Pomodoro and block distractions with extensions.",
-      "motivation": "Start small and reward consistency.",
-      "language": "Try Duolingo or Memrise daily with spaced repetition.",
-      "funfact": "Bananas are berries, but strawberries aren't!"
-    };
-    const keys = Object.keys(promptMap);
-    const key = keys[Math.floor(Math.random() * keys.length)];
-    const response = promptMap[key];
-
-    document.getElementById(`${botId}-response`).innerText = response;
-    promptHistory.push(`[${new Date().toLocaleTimeString()}] ${response}`);
-    updateHistory();
-  }
-
-  function updateHistory() {
-    const list = document.getElementById(`${botId}-history`);
-    list.innerHTML = '';
-    promptHistory.forEach(p => {
-      const li = document.createElement('li');
-      li.innerText = p;
-      list.appendChild(li);
-    });
-  }
-
-  // 🔄 BACKGROUND + STATE
   function applyBackground(canvas, type) {
     switch (type) {
       case 'grid':
@@ -215,7 +166,7 @@ function initializeBotLogic(botId) {
 
   function saveState() {
     canvasStates.push(canvas.toDataURL());
-    if (canvasStates.length > 100) canvasStates.shift();
+    if (canvasStates.length > 50) canvasStates.shift();
     redoStates = [];
   }
 
@@ -227,4 +178,45 @@ function initializeBotLogic(botId) {
       ctx.drawImage(img, 0, 0);
     };
   }
+
+  function recognizeSketch() {
+    const promptMap = {
+      "frontend": "Learn HTML, CSS, JS & React for frontend dev.",
+      "backend": "Explore Node.js, Express or Django for backend.",
+      "fullstack": "Master both frontend and backend. MERN is great.",
+      "ai": "Start with Python, scikit-learn, and datasets.",
+      "cloud": "Try AWS/GCP & deploy projects.",
+      "git": "Master GitHub, commits & pull requests.",
+      "resume": "Tailor it to job roles. Try Rezi or Zety.",
+      "interview": "Practice on LeetCode, Pramp, InterviewBit.",
+      "opensource": "Find GitHub projects with 'good first issue'.",
+      "ds": "Learn NumPy, pandas & machine learning.",
+      "figma": "Design UI/UX prototypes with auto-layout.",
+      "devops": "Understand CI/CD, Docker, GitHub Actions.",
+      "travel": "Use Google Flights, stay flexible, journal daily.",
+      "productivity": "Try Pomodoro + block distractions.",
+      "motivation": "Start small, reward consistency.",
+      "language": "Use Duolingo daily & spaced repetition.",
+      "funfact": "Bananas are berries, strawberries aren't!"
+    };
+    const keywords = Object.keys(promptMap);
+    const prompt = keywords[Math.floor(Math.random() * keywords.length)];
+    const response = promptMap[prompt];
+
+    document.getElementById(`${botId}-response`).innerText = response;
+    promptHistory.push(`[${new Date().toLocaleTimeString()}] ${response}`);
+    updateHistory();
+  }
+
+  function updateHistory() {
+    const list = document.getElementById(`${botId}-history`);
+    list.innerHTML = '';
+    promptHistory.forEach(entry => {
+      const li = document.createElement('li');
+      li.textContent = entry;
+      list.appendChild(li);
+    });
+  }
+
+  applyBackground(canvas, 'plain');
 }
