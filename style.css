@@ -66,3 +66,35 @@ canvas {
   text-align: center;
   color: #ccc;
 }
+/* All previous CSS styles retained */
+
+.music-player {
+  margin-top: 20px;
+  padding: 1rem;
+  background: #1e1e2f;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #000;
+  text-align: center;
+  width: 90%;
+  max-width: 900px;
+}
+
+.music-controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.music-controls button {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.music-controls input[type="range"] {
+  width: 150px;
+}
