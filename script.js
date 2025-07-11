@@ -188,3 +188,36 @@ function rotateFacts() {
 rotateFacts();
 applyBackground('plain');
 
+// 🎵 Music controls
+const tracks = [
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+];
+let currentTrack = 0;
+const audio = document.getElementById('audio');
+const audioSource = document.getElementById('audio-source');
+const volumeSlider = document.getElementById('volume-control');
+
+document.getElementById('next-track').addEventListener('click', () => {
+  currentTrack = (currentTrack + 1) % tracks.length;
+  updateTrack();
+});
+
+document.getElementById('prev-track').addEventListener('click', () => {
+  currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+  updateTrack();
+});
+
+volumeSlider.addEventListener('input', () => {
+  audio.volume = volumeSlider.value;
+});
+
+function updateTrack() {
+  audioSource.src = tracks[currentTrack];
+  audio.load();
+  audio.play();
+}
+
+// Load default volume
+audio.volume = 0.5;
