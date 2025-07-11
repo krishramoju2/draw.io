@@ -12,6 +12,93 @@ const brushColorEl = document.getElementById('brush-color');
 const brushStyleEl = document.getElementById('brush-style');
 const brushTypeEl = document.getElementById('font-style');
 const bgStyleEl = document.getElementById('bg-style');
+// ==== Eraser and Undo/Redo Feature ====
+
+let erasing = false;
+const canvasStates = [];
+let redoStates = [];
+
+// Store initial blank canvas state
+saveState();
+
+// Toggle Eraser
+document.getElementById('eraser-toggle').addEventListener('click', () => {
+  erasing = !erasing;
+  const btn = document.getElementById('eraser-toggle');
+  btn.classList.toggle('active', erasing);
+});
+
+// Undo
+document.getElementById('undo').addEventListener('click', () => {
+  if (canvasStates.length > 1) {
+    redoStates.push(canvasStates.pop());
+    restoreState(canvasStates[canvasStates.length - 1]);
+  }
+});
+
+// Redo
+document.getElementById('redo').addEventListener('click', () => {
+  if (redoStates.length > 0) {
+    const state = redoStates.pop();
+    canvasStates.push(state);
+    restoreState(state);
+  }
+});
+
+// Save canvas state
+function saveState() {
+  canvasStates.push(canvas.toDataURL());
+  if (canvasStates.length > 100) canvasStates.shift(); // limit history
+  redoStates = []; // clear redo stack on new draw
+}
+
+// Restore canvas state
+function restoreState(stateImage) {
+  const img = new Image();
+  img.src = stateImage;
+  img.onload = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+  };
+}
+
+// Modify draw function
+function draw(e) {
+  if (!painting) return;
+  ctx.lineWidth = brushSize;
+  ctx.strokeStyle = erasing ? '#ffffff' : brushColor;
+  ctx.lineCap = brushStyle;
+
+  switch (brushType) {
+    case 'dotted':
+      ctx.beginPath();
+      ctx.arc(e.offsetX, e.offsetY, brushSize / 2, 0, 2 * Math.PI);
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+      break;
+    case 'spray':
+      for (let i = 0; i < 10; i++) {
+        const offsetX = e.offsetX + Math.random() * brushSize - brushSize / 2;
+        const offsetY = e.offsetY + Math.random() * brushSize - brushSize / 2;
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.fillRect(offsetX, offsetY, 1, 1);
+      }
+      break;
+    default:
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+  }
+}
+
+// Hook saveState on mouseup
+canvas.addEventListener('mouseup', () => {
+  painting = false;
+  ctx.beginPath();
+  saveState();
+  recognizeSketch();
+});
 
 brushSizeEl.addEventListener('change', () => {
   brushSize = parseInt(brushSizeEl.value);
