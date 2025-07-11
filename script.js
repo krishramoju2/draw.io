@@ -1,7 +1,8 @@
 let botCounter = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('add-bot').addEventListener('click', addNewBot);
+  document.getElementById('new-window').addEventListener('click', addNewBot);
+
   addNewBot(); // Add first bot
 });
 
