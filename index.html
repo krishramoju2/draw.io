@@ -37,13 +37,14 @@ const tracks = [
   "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
 ];
 
-document.getElementById("new-window").addEventListener("click", () => {
-  const template = document.getElementById("stylusbot-template");
-  const clone = template.content.cloneNode(true);
-  const container = clone.querySelector(".bot-window");
-  document.getElementById("windows-container").appendChild(container);
-  initializeBot(container);
-});
+const template = document.getElementById("stylusbot-template");
+const clone = template.content.cloneNode(true);
+const wrapper = document.createElement("div");
+wrapper.className = "bot-wrapper";
+wrapper.appendChild(clone);
+document.getElementById("windows-container").appendChild(wrapper);
+initializeBot(wrapper.querySelector(".bot-window"));
+
 
 function initializeBot(container) {
   const canvas = container.querySelector(".draw-area");
